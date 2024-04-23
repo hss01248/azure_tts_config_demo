@@ -1,16 +1,57 @@
-# flutter_azure_tts_demo
+# azure tts config 
 
-flutter_azure_tts_demo
+>  flutter ui for azure tts config and test
 
-## Getting Started
+support by [flutter_azure_tts](https://pub.dev/packages/flutter_azure_tts)
 
-This project is a starting point for a Flutter application.
+this is a flutter package
 
-A few resources to get you started if this is your first Flutter project:
+full runnable demo is here: 
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+[azure_tts_config_demo](https://github.com/hss01248/azure_tts_config_demo)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Usage 
+
+```yaml
+  azure_tts_config: ^1.0.0
+  get: ^4.6.5
+  oktoast: ^3.4.0
+  load: ^1.0.0
+  flutter_azure_tts: ^0.1.6
+```
+
+
+
+```dart
+runApp(MaterialApp(
+    builder: (context, widget) {
+      return LoadingProvider(
+          themeData: LoadingThemeData(),
+          child: OKToast(
+            child: GetMaterialApp(home: TtsConfigPage()),
+          ));
+    },
+  ));
+```
+
+Use the page/widget TtsConfigPage to do azure config and test
+
+### static util method:
+
+```dart
+TtsConfigLogic:
+
+
+ static Future<Voice?> selectedVoice()
+   
+ static Future<void> initTtsOutSide(String? apiKey, String? region) 
+```
+
+
+
+# ui
+
+![image-20240423160839009](https://cdn.jsdelivr.net/gh/shuiniuhss/myimages@main/imagemac3/image-20240423160839009.png)
+
+
+

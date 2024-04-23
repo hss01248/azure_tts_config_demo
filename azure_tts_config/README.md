@@ -13,7 +13,7 @@ full runnable demo is here:
 # Usage 
 
 ```yaml
-  azure_tts_config: ^0.0.1
+  azure_tts_config: ^1.0.0
   get: ^4.6.5
   oktoast: ^3.4.0
   load: ^1.0.0
