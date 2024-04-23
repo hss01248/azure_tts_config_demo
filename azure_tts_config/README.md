@@ -6,9 +6,9 @@ support by [flutter_azure_tts](https://pub.dev/packages/flutter_azure_tts)
 
 this is a flutter package
 
-full demo is here: 
+full runnable demo is here: 
 
-
+[azure_tts_config_demo](https://github.com/hss01248/azure_tts_config_demo)
 
 # Usage 
 
@@ -36,7 +36,7 @@ runApp(MaterialApp(
 
 Use the page/widget TtsConfigPage to do azure config and test
 
-### static method:
+### static util method:
 
 ```dart
 TtsConfigLogic:
@@ -46,10 +46,6 @@ TtsConfigLogic:
    
  static Future<void> initTtsOutSide(String? apiKey, String? region) 
 ```
-
-
-
-
 
 
 
