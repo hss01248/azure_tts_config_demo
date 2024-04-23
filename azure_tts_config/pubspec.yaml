@@ -1,6 +1,6 @@
 name: azure_tts_config
 description: config page for azure tts
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/hss01248/azure_tts_config_demo
 
 environment:
