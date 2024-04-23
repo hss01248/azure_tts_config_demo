@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:load/load.dart';
 import 'package:oktoast/oktoast.dart';
 
+import 'demo_page/demo_page_view.dart';
+
 
 
 Future<void> main() async {
@@ -13,7 +15,7 @@ Future<void> main() async {
       return LoadingProvider(
           themeData: LoadingThemeData(),
           child: OKToast(
-            child: GetMaterialApp(home: TtsConfigPage()),
+            child: GetMaterialApp(home: DemoPagePage()),
           ));
     },
   ));

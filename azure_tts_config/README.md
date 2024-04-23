@@ -13,7 +13,7 @@ full runnable demo is here:
 # Usage 
 
 ```yaml
-  azure_tts_config: ^1.0.0
+  azure_tts_config: ^1.0.1
   get: ^4.6.5
   oktoast: ^3.4.0
   load: ^1.0.0
@@ -28,7 +28,7 @@ runApp(MaterialApp(
       return LoadingProvider(
           themeData: LoadingThemeData(),
           child: OKToast(
-            child: GetMaterialApp(home: TtsConfigPage()),
+            child: GetMaterialApp(home: DemoPagePage()),
           ));
     },
   ));
@@ -39,12 +39,18 @@ Use the page/widget TtsConfigPage to do azure config and test
 ### static util method:
 
 ```dart
-TtsConfigLogic:
+TtsUtil:
 
 
  static Future<Voice?> selectedVoice()
    
  static Future<void> initTtsOutSide(String? apiKey, String? region) 
+   
+ static void changeVoice(Function(Voice voice) callback)
+   
+ static void goVoiceSettingPage()
+   
+ static Future<void> play(String? text)
 ```
 
 

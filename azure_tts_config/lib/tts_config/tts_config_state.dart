@@ -1,4 +1,5 @@
 import 'package:flutter_azure_tts/flutter_azure_tts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TtsConfigState {
   String apiKey = "";
@@ -15,5 +16,6 @@ class TtsConfigState {
 
   TtsConfigState() {
     ///Initialize variables
+    //textInput = await SharedPreferences.getInstance().get
   }
 }

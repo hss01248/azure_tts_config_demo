@@ -17,34 +17,8 @@ class TtsConfigLogic extends GetxController {
   final TtsConfigState state = TtsConfigState();
   SharedPreferences? prefs ;
 
-  /// 全局获取当前的voice
-  static Future<Voice?> selectedVoice() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? selected = prefs.getString("tts-voice-selected");
-    if(selected !=null && selected.isNotEmpty){
-      return Voice.fromJson(jsonDecode(selected));
-    }
-    return null;
-  }
-  static Future<void> initTtsOutSide(String? apiKey, String? region) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if(apiKey !=null && region !=null && apiKey.isNotEmpty && region.isNotEmpty){
-      prefs.setString("tts-apikey",apiKey);
-      prefs.setString("tts-region",region);
-    }
 
-    String? apiKey2 = prefs.getString("tts-apikey");
-    String? region2 = prefs.getString("tts-region");
-    if(apiKey2 !=null && region2 !=null && apiKey2.isNotEmpty && region2.isNotEmpty){
-      AzureTts.init(
-          subscriptionKey: apiKey2,
-          region: region2,
-          withLogs: true);
-      TtsConfigState.hasInit = true;
-    }else{
-      debugPrint("prefs.getString(tts-apikey)  is null , tts init failed");
-    }
-  }
+
   @override
   Future<void> onReady() async {
     // TODO: implement onReady
@@ -55,6 +29,7 @@ class TtsConfigLogic extends GetxController {
     if(selected !=null && selected.isNotEmpty){
       state.selected = Voice.fromJson(jsonDecode(selected));
     }
+    state.textInput = prefs!.getString("tts-demoStr")??"";
 
     String? vos = prefs!.getString("tts-voices");
     List<Voice> voices = [];
@@ -121,41 +96,10 @@ class TtsConfigLogic extends GetxController {
 
   void onTextInputChanged(String value) {
     state.textInput = value;
+    prefs!.setString("tts-demoStr", value);
   }
 
-  Future<void> startGenTts() async {
-    if(state.selected ==null){
-      showToast("voice not selected");
-      return;
-    }
-    if(state.textInput.isEmpty){
-      showToast("text input is empty");
-      return;
-    }
-    showLoadingDialog();
-    try{
-      TtsParams params = TtsParams(
-          voice: state.selected!,
-          audioFormat: AudioOutputFormat.audio24khz48kBitrateMonoMp3,
-          rate: 1.0, // optional prosody rate (default is 1.0)
-          text: state.textInput);
 
-      final ttsResponse = await AzureTts.getTts(params);
-
-      //Get the audio bytes.
-      final audioBytes = ttsResponse.audio.buffer
-          .asByteData(); // you can save to a file for playback
-      String str = "Audio size: ${(audioBytes.lengthInBytes / (1024 )).toStringAsPrecision(2)} kB";
-      print(str);
-
-      // showToast(str);
-      save(audioBytes);
-    }catch(e,s){
-      debugPrint(e.toString());
-      debugPrintStack(stackTrace: s);
-      hideLoadingDialog();
-    }
-  }
 
 
 
@@ -184,11 +128,14 @@ class TtsConfigLogic extends GetxController {
       return;
     }
     try{
-      AzureTts.init(
-          subscriptionKey: state.apiKey,
-          region: state.region,
-          withLogs: true);
-      TtsConfigState.hasInit = true;
+      if(!TtsConfigState.hasInit){
+        AzureTts.init(
+            subscriptionKey: state.apiKey,
+            region: state.region,
+            withLogs: true);
+        TtsConfigState.hasInit = true;
+      }
+
       update();
       if(fromUI){
         showToast("azure tts init success");
@@ -205,30 +152,5 @@ class TtsConfigLogic extends GetxController {
     }
   }
 
-  Future<void> save(ByteData bytes) async {
 
-    ///手机储存目录
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    if(Platform.isAndroid){
-      Directory? result = await getExternalStorageDirectory();
-      if(result != null){
-        appDocDir = result;
-      }
-    }
-    String savePath = "${appDocDir.path}/audio_tts/";
-    Directory directory = Directory(savePath);
-    if(!directory.existsSync()){
-      directory.createSync();
-    }
-    String fileName = "${DateTime.now().millisecondsSinceEpoch}-${state.selected?.localName}-${state.selected?.locale}.mp3";
-    File file = File(savePath+fileName);
-    debugPrint("file path: ${file.path}");
-   await file.writeAsBytes(bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
-    hideLoadingDialog();
-    //然后播放:
-    final player = AudioPlayer();
-    await player.play(DeviceFileSource(file.path));
-
-    //await player.dispose();
-  }
 }

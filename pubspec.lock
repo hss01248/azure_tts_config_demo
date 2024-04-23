@@ -286,7 +286,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_azure_tts:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_azure_tts
       sha256: c216a6b6b7c1b4f2217bb2ad7b6b5b6c3b4221d21309eab57ea1cad41e55949e

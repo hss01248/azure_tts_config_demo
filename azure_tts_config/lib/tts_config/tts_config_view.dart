@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+import 'TtsUtil.dart';
 import 'tts_config_logic.dart';
 import 'tts_config_state.dart';
 
@@ -11,11 +12,15 @@ class TtsConfigPage extends StatelessWidget {
   final logic = Get.put(TtsConfigLogic());
   final state = Get.find<TtsConfigLogic>().state;
 
+  Function(Voice voice)? changeVoiceCallback;
+
+  TtsConfigPage({this.changeVoiceCallback});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("TTS Test"),
+      appBar:  AppBar(
+        title:  Text(changeVoiceCallback==null ?  "TTS Config" : "Change Voice"),
       ),
       body: GetBuilder<TtsConfigLogic>(
         builder: (controller) {
@@ -24,6 +29,8 @@ class TtsConfigPage extends StatelessWidget {
             voices(),
             //输入框
             TextFormField(
+              //todo 显示
+              initialValue: state.textInput,
               maxLines: 6,
               onChanged: (value) {
                 logic.onTextInputChanged(value);
@@ -35,10 +42,20 @@ class TtsConfigPage extends StatelessWidget {
             //按钮
             ElevatedButton(
                     onPressed: () {
-                      logic.startGenTts();
+                      TtsUtil.startGenTts(state.selected,state.textInput);
                     },
                     child: const Text("do tts"))
-                .width(double.infinity)
+                .width(double.infinity),
+            changeVoiceCallback==null ? SizedBox():
+            ElevatedButton(
+                onPressed:() {
+                  changeVoiceCallback?.call(state.selected!);
+                  if(changeVoiceCallback !=null){
+                    Get.back();
+                  }
+                },
+                child: Text("comfirm voice selected"))
+                .width(double.infinity).marginOnly(top: 16),
           ]).marginSymmetric(horizontal: 16, vertical: 10).scrollable();
         },
       ),
@@ -78,8 +95,8 @@ class TtsConfigPage extends StatelessWidget {
                     : () {
                         logic.initTts(true);
                       },
-                child: Text(TtsConfigState.hasInit ? "has init" : "do init"))
-            .width(double.infinity)
+                child: Text(TtsConfigState.hasInit ? "has already init" : "do init"))
+            .width(double.infinity),
       ],
     );
   }
@@ -132,6 +149,7 @@ class TtsConfigPage extends StatelessWidget {
             e == state.selected ? Colors.green : Colors.transparent)
         .gestures(onTap: () {
       logic.onVoiceSelected(e);
+
     });
   }
 }

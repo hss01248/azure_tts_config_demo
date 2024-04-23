@@ -35,6 +35,7 @@ dependencies:
   get: ^4.6.5
   oktoast: ^3.4.0
   load: ^1.0.0
+  flutter_azure_tts: ^0.1.6
 
 
 
