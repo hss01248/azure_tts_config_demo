@@ -1,7 +1,7 @@
 name: azure_tts_config
 description: config page for azure tts
 version: 1.0.0
-homepage:
+homepage: https://github.com/hss01248/azure_tts_config_demo
 
 environment:
   sdk: '>=2.19.0 <3.0.0'
