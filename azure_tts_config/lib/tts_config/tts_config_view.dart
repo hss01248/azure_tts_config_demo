@@ -1,3 +1,4 @@
+import 'package:azure_tts_config/tts_config/simple_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_azure_tts/flutter_azure_tts.dart';
 import 'package:get/get.dart';
@@ -116,7 +117,8 @@ class TtsConfigPage extends StatelessWidget {
             return voiceItem(e);
           }).toList(),
         )*/
-        ResponsiveGridList(
+        buildTabs(),
+        /*ResponsiveGridList(
           horizontalGridSpacing: 5,
           // Horizontal space between grid items
           verticalGridSpacing: 5,
@@ -136,7 +138,7 @@ class TtsConfigPage extends StatelessWidget {
           children: state.voices.map((e) {
             return voiceItem(e);
           }).toList(), // The list of widgets in the list
-        ).height(450).border(all: 0.5,color: Colors.green),
+        ).height(450).border(all: 0.5,color: Colors.green),*/
         Text("voice chosen: $str").marginSymmetric(vertical: 8),
       ],
     );
@@ -151,5 +153,44 @@ class TtsConfigPage extends StatelessWidget {
       logic.onVoiceSelected(e);
 
     });
+  }
+
+  Widget buildTabs() {
+    if(state.voiceTabs.isEmpty){
+      return SizedBox(height: 300,);
+    }
+    List<String> titles = [];
+    state.voiceTabs.keys.forEach((element) {
+      titles.add(TtsUtil.replaceVoiceLocalToChinese(element));
+    });
+    List<Widget> tabViews = [];
+    state.voiceTabs.keys.forEach((element) {
+      Widget widget = ResponsiveGridList(
+        horizontalGridSpacing: 5,
+        // Horizontal space between grid items
+        verticalGridSpacing: 5,
+        // Vertical space between grid items
+        horizontalGridMargin: 0,
+        // Horizontal space around the grid
+        verticalGridMargin: 2,
+        // Vertical space around the grid
+        minItemWidth: 100,
+        // The minimum item width (can be smaller, if the layout constraints are smaller)
+        minItemsPerRow: 1,
+        // The minimum items to show in a single row. Takes precedence over minItemWidth
+        maxItemsPerRow: 5,
+        // The maximum items to show in a single row. Can be useful on large screens
+        listViewBuilderOptions: ListViewBuilderOptions(),
+        // Options that are getting passed to the SliverChildBuilderDelegate() function
+        children: state.voiceTabs[element]!.map((e) {
+          return voiceItem(e);
+        }).toList(), // The list of widgets in the list
+      ).height(300);
+      tabViews.add(widget);
+    });
+    return SimpleTab(
+      tabTitles: titles,
+      tabViews: tabViews,
+    );
   }
 }

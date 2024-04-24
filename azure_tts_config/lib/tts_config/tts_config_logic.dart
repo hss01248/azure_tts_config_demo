@@ -44,7 +44,7 @@ class TtsConfigLogic extends GetxController {
         }
         voices.add(voice);
       });
-      state.voices = voices;
+      state.mapVoice(voices) ;
     }
     Future.delayed(Duration(seconds: 1)).then((value) => update());
   }
@@ -77,13 +77,14 @@ class TtsConfigLogic extends GetxController {
       List<Voice> voices = [];
       final voicesResponse = await AzureTts.getAvailableVoices();
       voices = voicesResponse.voices;
-      prefs!.setString("tts-voices", jsonEncode(voices));
+
       //Print all available voices
       print("$voices");
       if(fromUI){
         hideLoadingDialog();
       }
-      state.voices = voices;
+      state.mapVoice(voices,fromHttp: true);
+      prefs!.setString("tts-voices", jsonEncode(voices));
       update();
     }
   }

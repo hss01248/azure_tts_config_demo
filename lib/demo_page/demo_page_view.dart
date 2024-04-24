@@ -1,6 +1,7 @@
 import 'package:azure_tts_config/tts_config/TtsUtil.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:oktoast/oktoast.dart';
 
 import 'demo_page_logic.dart';
 
@@ -32,6 +33,14 @@ class DemoPagePage extends StatelessWidget {
               ElevatedButton(onPressed: (){
                 TtsUtil.goVoiceSettingPage();
               }, child: Text("open config page")),
+              ElevatedButton(onPressed: (){
+                Locale myLocale = Localizations.localeOf(Get.context!);
+                String languageCode = myLocale.languageCode; // 例如：'en' 表示英语
+                String? countryCode = myLocale.countryCode;   // 例如：'US' 表示美国
+                String str = "languageCode->$languageCode, countryCode: $countryCode";
+                debugPrint(str);
+                showToast(str);
+              }, child: Text("language code/countrycode")),
             ],
           ).marginAll(16);
         },
