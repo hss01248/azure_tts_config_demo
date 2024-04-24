@@ -9,11 +9,14 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_azure_tts/flutter_azure_tts.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:load/load.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../audio_player_icon.dart';
+import '../tts_files/tts_files_view.dart';
 import 'tts_config_state.dart';
 import 'tts_config_view.dart';
 
@@ -45,6 +48,10 @@ class TtsUtil{
 
   static void goVoiceSettingPage(){
     Get.dialog(TtsConfigPage());
+  }
+
+  static void showTTSFiles(){
+    Get.dialog(TtsFilesPage());
   }
 
 
@@ -82,30 +89,30 @@ class TtsUtil{
     }
   }
 
-  static Future<void> play(String? text) async {
+  static Future<Widget?> play(String? text,{bool? returnWidget}) async {
     if(text ==null || text.isEmpty){
       showToast("text is empty");
-      return;
+      return null;
     }
    await  initTtsOutSide(toastIfInitFailed: true);
 
     Voice? voice = await selectedVoice();
     if(voice ==null){
       showToast("please go settings page and select voice");
-      return;
+      return null;
     }
-    await startGenTts(voice, text);
+    return await startGenTts(voice, text,returnWidget: returnWidget);
   }
 
 
-  static   Future<void> startGenTts(Voice? voice,String textInput) async {
+  static   Future<Widget?> startGenTts(Voice? voice,String textInput,{bool? returnWidget}) async {
     if(voice ==null){
       showToast("voice not selected");
-      return;
+      return null;
     }
     if(textInput.isEmpty){
       showToast("text input is empty");
-      return;
+      return null;
     }
     showLoadingDialog();
     try{
@@ -124,16 +131,17 @@ class TtsUtil{
       print(str);
 
       // showToast(str);
-      save(audioBytes,voice);
+     return save(audioBytes,voice,returnWidget: returnWidget);
     }catch(e,s){
       debugPrint(e.toString());
       debugPrintStack(stackTrace: s);
       hideLoadingDialog();
+      return null;
     }
   }
 
 
-  static Future<void> save(ByteData bytes,Voice voice) async {
+  static Future<Widget?> save(ByteData bytes,Voice voice,{bool? returnWidget}) async {
 
     ///手机储存目录
     Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -148,14 +156,20 @@ class TtsUtil{
     if(!directory.existsSync()){
       directory.createSync();
     }
-    String fileName = "${DateTime.now().millisecondsSinceEpoch}-${voice.localName}-${replaceVoiceLocalToChinese(voice.locale)}.mp3";
+    String fileName = "${DateFormat('yyyy-MM-dd_HH_mm_ss').format(DateTime.now())}-${voice.localName}-${replaceVoiceLocalToChinese(voice.locale)}.mp3";
     File file = File(savePath+fileName);
     debugPrint("file path: ${file.path}");
     await file.writeAsBytes(bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
     hideLoadingDialog();
     //然后播放:
-    final player = AudioPlayer();
-    await player.play(DeviceFileSource(file.path));
+    if(returnWidget ==true){
+      return AudioPlayerIconWidget(path: file.path,playImmediately: true,);
+    }else{
+      final player = AudioPlayer();
+      await player.play(DeviceFileSource(file.path));
+    }
+
+
 
     //await player.dispose();
   }
@@ -165,7 +179,7 @@ class TtsUtil{
     Locale myLocale = Localizations.localeOf(Get.context!);
     String languageCode = myLocale.languageCode; // 例如：'en' 表示英语
     String? countryCode = myLocale.countryCode;   // 例如：'US' 表示美国
-    debugPrint("languageCode->$languageCode, countryCode: $countryCode");
+    //debugPrint("languageCode->$languageCode, countryCode: $countryCode");
     //if(languageCode.contains("zh") || languageCode.contains("CN")){
       //中文环境
       Map<String,String> languageCodes = {
@@ -263,7 +277,7 @@ class TtsUtil{
         "za": "南非"
       };
       String title = locale;
-      title = title.replaceFirst("wuu", "吴语/上海话");
+      title = title.replaceFirst("wuu", "吴语_上海话");
       title = title.replaceFirst("yue", "粤语");
       title = title.replaceFirst("guangxi", "广西话");
       title = title.replaceFirst("henan", "河南");

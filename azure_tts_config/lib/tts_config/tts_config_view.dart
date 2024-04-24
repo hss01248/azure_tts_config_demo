@@ -57,6 +57,16 @@ class TtsConfigPage extends StatelessWidget {
                 },
                 child: Text("comfirm voice selected"))
                 .width(double.infinity).marginOnly(top: 16),
+            const SizedBox(
+              height: 10,
+            ),
+            //按钮
+            ElevatedButton(
+                onPressed: () {
+                  TtsUtil.showTTSFiles();
+                },
+                child: const Text("show tts files"))
+                .width(double.infinity),
           ]).marginSymmetric(horizontal: 16, vertical: 10).scrollable();
         },
       ),
