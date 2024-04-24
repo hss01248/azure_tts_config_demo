@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:crypto/crypto.dart';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_azure_tts/flutter_azure_tts.dart';
@@ -103,7 +104,12 @@ class TtsUtil{
     }
     return await startGenTts(voice, text,returnWidget: returnWidget);
   }
+ static String calculateMD5(String input) {
 
+    final bytes = utf8.encode(input);
+    final digest = md5.convert(bytes);
+    return digest.toString();
+  }
 
   static   Future<Widget?> startGenTts(Voice? voice,String textInput,{bool? returnWidget}) async {
     if(voice ==null){
@@ -114,6 +120,20 @@ class TtsUtil{
       showToast("text input is empty");
       return null;
     }
+    /// 查看本地有没有这样的文件, 通过md5来确定
+    String text = "${voice.locale}-$textInput";
+    String md5Str = calculateMD5(text);
+    File? file = await findFile(md5Str);
+    if(file !=null){
+      if(returnWidget ==true){
+        return AudioPlayerIconWidget(path: file.path,playImmediately: true,);
+      }else{
+        final player = AudioPlayer();
+        await player.play(DeviceFileSource(file.path));
+        return null;
+      }
+    }
+
     showLoadingDialog();
     try{
       TtsParams params = TtsParams(
@@ -131,7 +151,7 @@ class TtsUtil{
       print(str);
 
       // showToast(str);
-     return save(audioBytes,voice,returnWidget: returnWidget);
+     return save(audioBytes,voice,md5Str,returnWidget: returnWidget);
     }catch(e,s){
       debugPrint(e.toString());
       debugPrintStack(stackTrace: s);
@@ -141,8 +161,7 @@ class TtsUtil{
   }
 
 
-  static Future<Widget?> save(ByteData bytes,Voice voice,{bool? returnWidget}) async {
-
+  static Future<Directory> ttsDir() async {
     ///手机储存目录
     Directory appDocDir = await getApplicationDocumentsDirectory();
     if(Platform.isAndroid){
@@ -151,13 +170,21 @@ class TtsUtil{
         appDocDir = result;
       }
     }
-    String savePath = "${appDocDir.path}/audio_tts/";
+    String savePath = "${appDocDir.path}/audio_tts";
     Directory directory = Directory(savePath);
     if(!directory.existsSync()){
       directory.createSync();
     }
-    String fileName = "${DateFormat('yyyy-MM-dd_HH_mm_ss').format(DateTime.now())}-${voice.localName}-${replaceVoiceLocalToChinese(voice.locale)}.mp3";
-    File file = File(savePath+fileName);
+    return directory;
+  }
+
+  static Future<Widget?> save(ByteData bytes,Voice voice,String md5Str,{bool? returnWidget}) async {
+
+    ///手机储存目录
+    Directory directory = await ttsDir();
+
+    String fileName = "${DateFormat('yyyy-MM-dd_HH_mm_ss').format(DateTime.now())}-${voice.localName}-${replaceVoiceLocalToChinese(voice.locale)}-$md5Str.mp3";
+    File file = File("${directory.path}/$fileName");
     debugPrint("file path: ${file.path}");
     await file.writeAsBytes(bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
     hideLoadingDialog();
@@ -294,7 +321,7 @@ class TtsUtil{
         if(split.isNotEmpty){
           String code = split[split.length-1].toLowerCase();
           if(languageCodes.containsKey(code)){
-            title = title.replaceAll("-"+code.toUpperCase(), "-"+languageCodes[code]!);
+            title = title.replaceAll("-${code.toUpperCase()}", "-${languageCodes[code]!}");
           }
         }
       }
@@ -303,6 +330,10 @@ class TtsUtil{
     return title;
     }
 
+  static Future<File?> findFile(String md5str) async {
+    Directory directory = await TtsUtil.ttsDir();
+    var listSync = directory.listSync();
+    return  listSync.firstWhereOrNull((element) => element.path.contains(md5str)) as File?;
+  }
 
-  //}
 }

@@ -40,21 +40,23 @@ class TtsFilesPage extends StatelessWidget {
     final formattedDateTime = dateFormat.format(file.lastModifiedSync());
     return Row(
       children: [
-        AudioPlayerIconWidget(path: path,),
-        Column(
+        AudioPlayerIconWidget(path: path,).marginOnly(left: 10),
+        Expanded(child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(name),
-            const SizedBox(width: 10,),
+            Text(name,maxLines: 2,softWrap: true,),
+            const SizedBox(width: 12,),
             Row(
               children: [
                 Text(size),
-                const SizedBox(width: 5,),
+                const SizedBox(width: 10,),
                 Text(duration),
               ],
             )
           ],
-        ).marginAll(10).gestures(onLongPress: () async {
+        )).marginAll(10).gestures(
+    behavior: HitTestBehavior.opaque,
+            onLongPress: () async {
           //长按分享
           final result = await Share.shareXFiles([XFile(path)], text: 'amazing azure tts:');
           if (result.status == ShareResultStatus.success) {

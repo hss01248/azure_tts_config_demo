@@ -159,7 +159,9 @@ class TtsConfigPage extends StatelessWidget {
         .paddingAll(8)
         .backgroundColor(
             e == state.selected ? Colors.green : Colors.transparent)
-        .gestures(onTap: () {
+        .gestures(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
       logic.onVoiceSelected(e);
 
     });

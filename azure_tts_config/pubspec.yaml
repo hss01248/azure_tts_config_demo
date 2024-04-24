@@ -1,6 +1,6 @@
 name: azure_tts_config
 description: config page for azure tts
-version: 1.0.4
+version: 1.0.5
 homepage: https://github.com/hss01248/azure_tts_config_demo
 
 environment:
@@ -21,6 +21,7 @@ dependencies:
   shared_preferences: ^2.1.1
   intl: ^0.17.0
   share_plus: ^6.3.4
+  crypto: ^3.0.2
 
 dev_dependencies:
   flutter_test:

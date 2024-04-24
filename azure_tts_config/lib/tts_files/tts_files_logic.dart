@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:azure_tts_config/tts_config/TtsUtil.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -22,19 +23,7 @@ class TtsFilesLogic extends GetxController {
   }
 
   Future<void> loadDir() async {
-    ///手机储存目录
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    if(Platform.isAndroid){
-      Directory? result = await getExternalStorageDirectory();
-      if(result != null){
-        appDocDir = result;
-      }
-    }
-    String savePath = "${appDocDir.path}/audio_tts/";
-    Directory directory = Directory(savePath);
-    if(!directory.existsSync()){
-      directory.createSync();
-    }
+    Directory directory = await TtsUtil.ttsDir();
     var listSync = directory.listSync();
     listSync.forEach((element) {
       state.files.add(element.path);
