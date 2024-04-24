@@ -13,7 +13,7 @@ full runnable demo is here:
 # Usage 
 
 ```yaml
-  azure_tts_config: ^1.0.1
+  azure_tts_config: ^1.0.4
   get: ^4.6.5
   oktoast: ^3.4.0
   load: ^1.0.0
@@ -50,14 +50,24 @@ TtsUtil:
    
  static void goVoiceSettingPage()
    
- static Future<void> play(String? text)
+ static void showTTSFiles()
+   
+ static Future<Widget?> play(String? text,{bool? returnWidget})
+   
+ AudioPlayerIconWidget({super.key,
+     required this.path,
+     this.size = 35,
+     this.playImmediately = false,
+   })
+   
 ```
 
 
 
 # ui
 
-![image-20240423160839009](https://cdn.jsdelivr.net/gh/shuiniuhss/myimages@main/imagemac3/image-20240423160839009.png)
+![image-20240424152328608](https://cdn.jsdelivr.net/gh/shuiniuhss/myimages@main/imagemac3/image-20240424152328608.png)
 
 
 
+![image-20240424152401823](https://cdn.jsdelivr.net/gh/shuiniuhss/myimages@main/imagemac3/image-20240424152401823.png)

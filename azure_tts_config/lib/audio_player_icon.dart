@@ -1,11 +1,12 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 class AudioPlayerIconWidget extends StatefulWidget {
    AudioPlayerIconWidget({super.key,
      required this.path,
-     this.size = 30,
+     this.size = 35,
      this.playImmediately = false,
    });
    String path;
@@ -47,21 +48,20 @@ class _AudioPlayerIconWidgetState extends State<AudioPlayerIconWidget> {
   @override
   void dispose() {
     super.dispose();
+    player.stop();
     player.dispose();
   }
 
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.size,
-      height: widget.size,
-      child: IconButton(onPressed: (){
+    return IconButton(onPressed: (){
         onPressed();
       },
+          iconSize: widget.size/1.7,
           color: player.state == PlayerState.playing ? Colors.red:Colors.blue,
-          icon: Icon(buildByPlayState())),
-    );
+          icon: Icon(buildByPlayState()),
+    ).constrained(width: widget.size,height: widget.size);
   }
 
  IconData buildByPlayState() {
