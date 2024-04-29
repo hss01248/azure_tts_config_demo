@@ -1,4 +1,5 @@
 import 'package:azure_tts_config/tts_config/tts_config_view.dart';
+import 'package:chinese_font_library/chinese_font_library.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:load/load.dart';
@@ -11,6 +12,7 @@ import 'demo_page/demo_page_view.dart';
 Future<void> main() async {
   await WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
+    theme: ThemeData().useSystemChineseFont(),
     builder: (context, widget) {
       return LoadingProvider(
           themeData: LoadingThemeData(),
