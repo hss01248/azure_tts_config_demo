@@ -81,6 +81,7 @@ class TtsConfigPage extends StatelessWidget {
             const Text("apiKey:"),
             Expanded(
                 child: TextFormField(
+                  keyboardType:TextInputType.visiblePassword,
               initialValue: state.apiKey,
               onChanged: (value) {
                 state.apiKey = value;
@@ -88,6 +89,7 @@ class TtsConfigPage extends StatelessWidget {
             ))
           ],
         ),
+        SizedBox(height: 15,),
         Row(
           children: [
             const Text("region:"),
@@ -100,6 +102,7 @@ class TtsConfigPage extends StatelessWidget {
             ))
           ],
         ),
+        SizedBox(height: 15,),
         ElevatedButton(
                 onPressed: TtsConfigState.hasInit
                     ? null

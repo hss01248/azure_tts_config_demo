@@ -121,7 +121,7 @@ class TtsUtil{
       return null;
     }
     /// 查看本地有没有这样的文件, 通过md5来确定
-    String text = "${voice.locale}-$textInput";
+    String text = "${voice.locale}-${voice.name}-$textInput";
     String md5Str = calculateMD5(text);
     File? file = await findFile(md5Str);
     if(file !=null){
